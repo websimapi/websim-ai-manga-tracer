@@ -14,21 +14,31 @@
     </div>
 
     <div class="controls">
-        <button id="generate-btn">
-            <img src="magic-wand.png" alt="" width="20" height="20">
-            Generate Character
+        <button id="generate-btn" title="Generate New Character">
+            <img src="magic-wand.png" alt="Generate" width="24" height="24">
         </button>
-        <div class="tool">
-            <label for="color-picker">Brush Color:</label>
+        
+        <div class="tool-separator"></div>
+
+        <div class="tool" title="Brush Color">
             <input type="color" id="color-picker" value="#FF007F">
         </div>
-        <div class="tool">
-            <label for="brush-size">Brush Size:</label>
+        
+        <div class="tool brush-tool" title="Brush Size">
+            <img src="brush-icon.png" alt="Brush Size" class="tool-icon">
             <input type="range" id="brush-size" min="1" max="50" value="5">
             <span id="brush-size-value">5</span>
         </div>
-        <button id="clear-btn">Clear Tracing</button>
-        <a id="download-btn" href="#" download="my-manga-tracing.png">Download Tracing</a>
+
+        <button id="clear-btn" title="Clear Tracing">
+            <img src="trash-can.png" alt="Clear" width="24" height="24">
+        </button>
+
+        <div class="tool-separator"></div>
+
+        <a id="download-btn" href="#" download="my-manga-tracing.png" title="Download Tracing">
+             <img src="download-icon.png" alt="Download" width="24" height="24">
+        </a>
     </div>
 
     <div id="canvas-container">
