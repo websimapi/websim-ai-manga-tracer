@@ -8,36 +8,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="controls">
-        <input type="text" id="prompt-input" placeholder="Describe your character...">
-        <button id="generate-btn" title="Generate Character">
-            <img src="magic-wand.png" alt="Generate" width="24" height="24">
-        </button>
-        
-        <div class="tool-separator"></div>
-
-        <div class="tool" title="Brush Color">
-            <input type="color" id="color-picker" value="#FF007F">
+    <div class="main-controls-container">
+        <div class="prompt-container">
+            <textarea id="prompt-input" placeholder="Describe your character..." rows="2"></textarea>
+            <button id="generate-btn" title="Generate Character">
+                <img src="magic-wand.png" alt="Generate" width="24" height="24">
+            </button>
         </div>
-        
-        <div class="tool brush-tool" title="Brush Size">
-            <img src="brush-icon.png" alt="Brush Size" class="tool-icon">
-            <div class="brush-size-control">
-                <button id="brush-size-down" aria-label="Decrease brush size">-</button>
-                <input type="number" id="brush-size-input" value="5" min="1" max="50" aria-label="Brush size">
-                <button id="brush-size-up" aria-label="Increase brush size">+</button>
+
+        <div class="toolbar">
+            <div class="tool" title="Brush Color">
+                <input type="color" id="color-picker" value="#FF007F">
             </div>
+            
+            <div class="tool brush-tool" title="Brush Size">
+                <img src="brush-icon.png" alt="Brush Size" class="tool-icon">
+                <div class="brush-size-control">
+                    <button id="brush-size-down" aria-label="Decrease brush size">-</button>
+                    <input type="number" id="brush-size-input" value="5" min="1" max="50" aria-label="Brush size">
+                    <button id="brush-size-up" aria-label="Increase brush size">+</button>
+                </div>
+            </div>
+
+            <button id="clear-btn" title="Clear Tracing">
+                <img src="trash-can.png" alt="Clear" width="24" height="24">
+            </button>
+
+            <div class="tool-separator"></div>
+
+            <a id="download-btn" href="#" download="my-manga-tracing.png" title="Download Tracing">
+                <img src="download-icon.png" alt="Download" width="24" height="24">
+            </a>
         </div>
-
-        <button id="clear-btn" title="Clear Tracing">
-            <img src="trash-can.png" alt="Clear" width="24" height="24">
-        </button>
-
-        <div class="tool-separator"></div>
-
-        <a id="download-btn" href="#" download="my-manga-tracing.png" title="Download Tracing">
-             <img src="download-icon.png" alt="Download" width="24" height="24">
-        </a>
     </div>
 
     <div id="canvas-container">
