@@ -3,8 +3,9 @@ import confetti from 'canvas-confetti';
 const generateBtn = document.getElementById('generate-btn');
 const clearBtn = document.getElementById('clear-btn');
 const colorPicker = document.getElementById('color-picker');
-const brushSizeInput = document.getElementById('brush-size');
-const brushSizeValue = document.getElementById('brush-size-value');
+const brushSizeInput = document.getElementById('brush-size-input');
+const brushSizeUpBtn = document.getElementById('brush-size-up');
+const brushSizeDownBtn = document.getElementById('brush-size-down');
 const downloadBtn = document.getElementById('download-btn');
 
 const canvas = document.getElementById('drawing-canvas');
@@ -29,7 +30,19 @@ function resizeCanvas() {
 function updateBrush() {
     ctx.strokeStyle = colorPicker.value;
     ctx.lineWidth = brushSizeInput.value;
-    brushSizeValue.textContent = brushSizeInput.value;
+}
+
+function changeBrushSize(amount) {
+    let currentSize = parseInt(brushSizeInput.value, 10) || 1;
+    let newSize = currentSize + amount;
+    const min = parseInt(brushSizeInput.min, 10);
+    const max = parseInt(brushSizeInput.max, 10);
+
+    if (newSize < min) newSize = min;
+    if (newSize > max) newSize = max;
+
+    brushSizeInput.value = newSize;
+    updateBrush();
 }
 
 function startDrawing(e) {
@@ -120,6 +133,16 @@ generateBtn.addEventListener('click', generateCharacter);
 clearBtn.addEventListener('click', clearCanvas);
 colorPicker.addEventListener('input', updateBrush);
 brushSizeInput.addEventListener('input', updateBrush);
+brushSizeInput.addEventListener('change', () => { // Clamp value if user types something out of range
+    const min = parseInt(brushSizeInput.min, 10);
+    const max = parseInt(brushSizeInput.max, 10);
+    let value = parseInt(brushSizeInput.value, 10);
+    if (isNaN(value) || value < min) brushSizeInput.value = min;
+    if (value > max) brushSizeInput.value = max;
+    updateBrush();
+});
+brushSizeUpBtn.addEventListener('click', () => changeBrushSize(1));
+brushSizeDownBtn.addEventListener('click', () => changeBrushSize(-1));
 downloadBtn.addEventListener('click', downloadImage);
 
 canvas.addEventListener('mousedown', startDrawing);

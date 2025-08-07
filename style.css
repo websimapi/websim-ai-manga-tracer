@@ -50,6 +50,54 @@ body {
     padding: 0 8px;
 }
 
+.brush-size-control {
+    display: flex;
+    align-items: center;
+}
+
+.brush-size-control button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #555;
+    border-radius: 6px;
+}
+
+#brush-size-input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    margin: 0;
+    height: 26px; /* to align with button border */
+    font-size: 0.9rem;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    -moz-appearance: textfield; /* Firefox */
+}
+#brush-size-input::-webkit-outer-spin-button,
+#brush-size-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#brush-size-down {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#brush-size-up {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
 .tool-separator {
     width: 1px;
     height: 24px;
@@ -208,9 +256,10 @@ input[type="color"]::-moz-color-swatch {
         flex-wrap: wrap;
         justify-content: center;
         width: auto;
+        gap: 8px;
     }
     .brush-tool {
-        flex-grow: 1;
+        padding: 0;
     }
     input[type="range"] {
         width: 100px; /* Allow slider to shrink */
