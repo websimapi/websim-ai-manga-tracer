@@ -36,10 +36,24 @@
 
             <div class="tool-separator"></div>
 
+            <button id="layers-btn" title="Toggle Layers Panel">
+                <img src="layers-icon.png" alt="Layers" width="24" height="24">
+            </button>
+
             <a id="download-btn" href="#" download="my-manga-tracing.png" title="Download Tracing">
                 <img src="download-icon.png" alt="Download" width="24" height="24">
             </a>
         </div>
+    </div>
+
+    <div id="layers-panel" class="hidden">
+        <div class="layers-header">
+            <h3>Layers</h3>
+            <button id="add-layer-btn" title="Add New Layer">
+                <img src="add-layer-icon.png" alt="Add Layer" width="24" height="24">
+            </button>
+        </div>
+        <div id="layers-list"></div>
     </div>
 
     <div id="canvas-container">

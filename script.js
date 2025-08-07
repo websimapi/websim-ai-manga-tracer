@@ -8,6 +8,10 @@ const brushSizeUpBtn = document.getElementById('brush-size-up');
 const brushSizeDownBtn = document.getElementById('brush-size-down');
 const downloadBtn = document.getElementById('download-btn');
 const promptInput = document.getElementById('prompt-input');
+const layersBtn = document.getElementById('layers-btn');
+const addLayerBtn = document.getElementById('add-layer-btn');
+const layersPanel = document.getElementById('layers-panel');
+const layersListEl = document.getElementById('layers-list');
 
 const canvas = document.getElementById('drawing-canvas');
 const ctx = canvas.getContext('2d');
@@ -19,18 +23,135 @@ let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 
+// Layer management
+let layers = [];
+let activeLayerId = null;
+let layerCounter = 1;
+
+function createLayer() {
+    const id = Date.now();
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+    offscreenCtx.lineCap = 'round';
+    offscreenCtx.lineJoin = 'round';
+
+    const newLayer = {
+        id,
+        name: `Layer ${layerCounter++}`,
+        canvas: offscreenCanvas,
+        ctx: offscreenCtx,
+        isVisible: true,
+    };
+
+    layers.push(newLayer);
+    setActiveLayer(id);
+    updateLayersList();
+    return newLayer;
+}
+
+function setActiveLayer(id) {
+    activeLayerId = id;
+    updateLayersList();
+}
+
+function getActiveLayer() {
+    return layers.find(l => l.id === activeLayerId);
+}
+
+function deleteLayer(id) {
+    if (layers.length <= 1) {
+        alert("You cannot delete the last layer.");
+        return;
+    }
+    const layerIndex = layers.findIndex(l => l.id === id);
+    if (layerIndex > -1) {
+        layers.splice(layerIndex, 1);
+        if (activeLayerId === id) {
+            const newActiveIndex = Math.max(0, layerIndex - 1);
+            setActiveLayer(layers[newActiveIndex].id);
+        }
+        updateLayersList();
+        renderAllLayers();
+    }
+}
+
+function toggleLayerVisibility(id) {
+    const layer = layers.find(l => l.id === id);
+    if (layer) {
+        layer.isVisible = !layer.isVisible;
+        updateLayersList();
+        renderAllLayers();
+    }
+}
+
+function updateLayersList() {
+    layersListEl.innerHTML = '';
+    [...layers].reverse().forEach(layer => {
+        const item = document.createElement('div');
+        item.className = 'layer-item';
+        item.classList.toggle('active', layer.id === activeLayerId);
+        item.dataset.id = layer.id;
+
+        const eyeIconSrc = layer.isVisible ? 'eye-open-icon.png' : 'eye-closed-icon.png';
+
+        item.innerHTML = `
+            <button class="layer-visibility" title="Toggle Visibility"><img src="${eyeIconSrc}" alt="visibility"></button>
+            <span class="layer-name">${layer.name}</span>
+            <button class="layer-delete" title="Delete Layer"><img src="trash-can.png" alt="delete"></button>
+        `;
+        
+        item.addEventListener('click', (e) => {
+             if (!e.target.closest('.layer-visibility') && !e.target.closest('.layer-delete')) {
+                setActiveLayer(layer.id);
+            }
+        });
+        
+        item.querySelector('.layer-visibility').addEventListener('click', () => toggleLayerVisibility(layer.id));
+        item.querySelector('.layer-delete').addEventListener('click', () => deleteLayer(layer.id));
+        
+        layersListEl.appendChild(item);
+    });
+}
+
+function renderAllLayers() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    layers.forEach(layer => {
+        if (layer.isVisible) {
+            ctx.drawImage(layer.canvas, 0, 0);
+        }
+    });
+}
+
 function resizeCanvas() {
     const { width, height } = canvasContainer.getBoundingClientRect();
     canvas.width = width;
     canvas.height = height;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    
+    layers.forEach(layer => {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = layer.canvas.width;
+        tempCanvas.height = layer.canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(layer.canvas, 0, 0);
+
+        layer.canvas.width = width;
+        layer.canvas.height = height;
+        layer.ctx.lineCap = 'round';
+        layer.ctx.lineJoin = 'round';
+        layer.ctx.drawImage(tempCanvas, 0, 0);
+    });
+
+    renderAllLayers();
     updateBrush();
 }
 
 function updateBrush() {
-    ctx.strokeStyle = colorPicker.value;
-    ctx.lineWidth = brushSizeInput.value;
+    const activeLayer = getActiveLayer();
+    if (!activeLayer) return;
+    activeLayer.ctx.strokeStyle = colorPicker.value;
+    activeLayer.ctx.lineWidth = brushSizeInput.value;
 }
 
 function changeBrushSize(amount) {
@@ -47,18 +168,27 @@ function changeBrushSize(amount) {
 }
 
 function startDrawing(e) {
+    if (!getActiveLayer()) return;
     isDrawing = true;
     [lastX, lastY] = getMousePos(e);
 }
 
 function draw(e) {
     if (!isDrawing) return;
+    const activeLayer = getActiveLayer();
+    if (!activeLayer) return;
+
     const [currentX, currentY] = getMousePos(e);
-    ctx.beginPath();
-    ctx.moveTo(lastX, lastY);
-    ctx.lineTo(currentX, currentY);
-    ctx.stroke();
+    
+    const layerCtx = activeLayer.ctx;
+    layerCtx.beginPath();
+    layerCtx.moveTo(lastX, lastY);
+    layerCtx.lineTo(currentX, currentY);
+    layerCtx.stroke();
+    
     [lastX, lastY] = [currentX, currentY];
+
+    renderAllLayers();
 }
 
 function stopDrawing() {
@@ -79,7 +209,11 @@ function getMousePos(e) {
 }
 
 function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const activeLayer = getActiveLayer();
+    if (activeLayer) {
+        activeLayer.ctx.clearRect(0, 0, activeLayer.canvas.width, activeLayer.canvas.height);
+        renderAllLayers();
+    }
 }
 
 async function generateCharacter() {
@@ -101,7 +235,10 @@ async function generateCharacter() {
 
         referenceImage.src = result.url;
         referenceImage.onload = () => {
-            clearCanvas(); // Clear previous tracing
+            layers.forEach(layer => {
+                layer.ctx.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+            });
+            renderAllLayers(); // Clear previous tracing from all layers
             loadingIndicator.classList.add('hidden');
             generateBtn.disabled = false;
             promptInput.disabled = false;
@@ -121,7 +258,22 @@ async function generateCharacter() {
 }
 
 function downloadImage() {
-    downloadBtn.href = canvas.toDataURL('image/png');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    // Draw reference image first
+    tempCtx.drawImage(referenceImage, 0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Draw visible layers on top
+    layers.forEach(layer => {
+        if (layer.isVisible) {
+            tempCtx.drawImage(layer.canvas, 0, 0);
+        }
+    });
+
+    downloadBtn.href = tempCanvas.toDataURL('image/png');
 }
 
 // Event Listeners
@@ -146,6 +298,11 @@ brushSizeUpBtn.addEventListener('click', () => changeBrushSize(1));
 brushSizeDownBtn.addEventListener('click', () => changeBrushSize(-1));
 downloadBtn.addEventListener('click', downloadImage);
 
+layersBtn.addEventListener('click', () => {
+    layersPanel.classList.toggle('hidden');
+});
+addLayerBtn.addEventListener('click', createLayer);
+
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
@@ -158,7 +315,9 @@ canvas.addEventListener('touchend', stopDrawing);
 
 // Initial Setup
 window.addEventListener('load', () => {
-    resizeCanvas();
-    updateBrush();
+    resizeCanvas(); // This will also call updateBrush
+    if (layers.length === 0) {
+        createLayer();
+    }
 });
 window.addEventListener('resize', resizeCanvas);
