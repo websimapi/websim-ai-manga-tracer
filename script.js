@@ -13,15 +13,33 @@ const ctx = canvas.getContext('2d');
 const referenceImage = document.getElementById('reference-image');
 const loadingIndicator = document.getElementById('loading-indicator');
 const canvasContainer = document.getElementById('canvas-container');
+const controls = document.querySelector('.controls');
 
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
 
-function resizeCanvas() {
-    const { width, height } = canvasContainer.getBoundingClientRect();
-    canvas.width = width;
-    canvas.height = height;
+function resizeAndPositionCanvas() {
+    // Set a baseline for vertical gap
+    const verticalGap = 20;
+
+    // Calculate available dimensions for the canvas
+    const availableWidth = window.innerWidth - 20; // 10px padding on each side
+    const controlsRect = controls.getBoundingClientRect();
+    const availableHeight = window.innerHeight - controlsRect.bottom - verticalGap - 10; // 10px bottom padding
+
+    // Determine the size of the square canvas (max size that fits)
+    const size = Math.floor(Math.min(availableWidth, availableHeight));
+
+    // Apply the new size to the canvas container
+    canvasContainer.style.width = `${size}px`;
+    canvasContainer.style.height = `${size}px`;
+
+    // Update the canvas rendering resolution
+    canvas.width = size;
+    canvas.height = size;
+
+    // Redraw or re-apply styles as needed
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     updateBrush();
@@ -157,7 +175,7 @@ canvas.addEventListener('touchend', stopDrawing);
 
 // Initial Setup
 window.addEventListener('load', () => {
-    resizeCanvas();
+    resizeAndPositionCanvas();
     updateBrush();
 });
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize', resizeAndPositionCanvas);

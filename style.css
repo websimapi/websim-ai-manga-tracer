@@ -1,9 +1,18 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling */
+    -webkit-tap-highlight-color: transparent; /* Disable tap highlight on mobile */
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f0f2f5;
     color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    margin: 0;
     padding: 20px;
 }
 
@@ -21,8 +30,19 @@ body {
     margin-bottom: 20px;
 }
 
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    padding: 10px;
+    box-sizing: border-box;
+    align-items: center; /* Center children horizontally */
+    gap: 10px;
+}
+
 .controls {
-    margin: 20px auto;
+    margin: 0;
     padding: 5px;
     background-color: #fff;
     border-radius: 12px;
@@ -35,6 +55,7 @@ body {
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    flex-shrink: 0; /* Prevent controls from shrinking */
 }
 
 .tool {
@@ -169,11 +190,9 @@ input[type="color"]::-moz-color-swatch {
 }
 
 #canvas-container {
-    margin: 20px auto;
+    margin: 0; /* No margin needed with flexbox centering */
     position: relative;
-    width: 90%;
-    max-width: 512px;
-    aspect-ratio: 1 / 1;
+    /* width and height are now set by JS */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     overflow: hidden; /* Ensures canvas doesn't overflow the rounded corners */
@@ -195,6 +214,7 @@ input[type="color"]::-moz-color-swatch {
 
 #reference-image {
     background-color: #fff;
+    object-fit: contain; /* Ensure the reference image scales properly */
 }
 
 .hidden {
@@ -234,8 +254,8 @@ input[type="color"]::-moz-color-swatch {
 }
 
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
+    .main-container {
+        gap: 10px;
     }
 
     .controls {
