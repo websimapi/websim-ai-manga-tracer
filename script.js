@@ -138,4 +138,3 @@ window.addEventListener('load', () => {
     updateBrush();
 });
 window.addEventListener('resize', resizeCanvas);
-
