@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Manga Tracer</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Zeyada&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>AI Manga Tracer</h1>
+        <p>Generate an AI character and trace over it to practice your drawing skills!</p>
+    </div>
+
+    <div class="controls">
+        <button id="generate-btn">
+            <img src="magic-wand.png" alt="" width="20" height="20">
+            Generate Character
+        </button>
+        <div class="tool">
+            <label for="color-picker">Brush Color:</label>
+            <input type="color" id="color-picker" value="#FF007F">
+        </div>
+        <div class="tool">
+            <label for="brush-size">Brush Size:</label>
+            <input type="range" id="brush-size" min="1" max="50" value="5">
+            <span id="brush-size-value">5</span>
+        </div>
+        <button id="clear-btn">Clear Tracing</button>
+        <a id="download-btn" href="#" download="my-manga-tracing.png">Download Tracing</a>
+    </div>
+
+    <div id="canvas-container">
+        <img id="reference-image" src="placeholder.png" alt="AI Generated Manga Character">
+        <canvas id="drawing-canvas"></canvas>
+        <div id="loading-indicator" class="hidden">
+            <div class="spinner"></div>
+            <p>Generating your character...</p>
+        </div>
+    </div>
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "canvas-confetti": "https://cdn.skypack.dev/canvas-confetti"
+        }
+      }
+    </script>
+    <script type="module" src="script.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
